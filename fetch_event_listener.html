@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Event Listener</title>
+</head>
+<body>
+    <script>
+        // Add event listener for fetch
+        addEventListener('fetch', event => {
+            event.respondWith(handleRequest(event.request));
+        });
+
+        // Define the handleRequest function
+        async function handleRequest(request) {
+            // Define the target domain for the root path
+            const rootRedirectDomain = "https://juts0testing-a452831c1e54.herokuapp.com";
+
+            // Define the target domain for other paths
+            const targetDomain = "https://juts0testing-a452831c1e54.herokuapp.com";
+
+            // Extract the path from the incoming URL
+            const url = new URL(request.url);
+            const path = url.pathname.replace(/^\//, '');
+
+            // If the path is empty, redirect to the rootRedirectDomain
+            if (path === '') {
+                const rootRedirectUrl = `${rootRedirectDomain}/`;
+                return Response.redirect(rootRedirectUrl, 302);
+            }
+
+            // Construct the new URL with the same path for other paths
+            url.hostname = targetDomain.replace(/^https?:\/\//, '');
+
+            // Create a new request with the modified URL
+            const modifiedRequest = new Request(url, request);
+
+            return fetch(modifiedRequest);
+        }
+    </script>
+</body>
+</html>
